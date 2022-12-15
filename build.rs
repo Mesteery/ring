@@ -455,7 +455,7 @@ fn build_library(
         .map(Path::new)
         .any(|p| need_run(&p, &lib_path, includes_modified))
     {
-        let mut c = cc::Build::new();
+        let mut c = cc_builder();
 
         for f in LD_FLAGS {
             let _ = c.flag(&f);
@@ -530,7 +530,7 @@ fn cc(
 ) -> Command {
     let is_musl = target.env.starts_with("musl");
 
-    let mut c = cc::Build::new();
+    let mut c = cc_builder();
     let _ = c.include("include");
     match ext {
         "c" => {
