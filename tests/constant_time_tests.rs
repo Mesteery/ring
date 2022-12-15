@@ -15,10 +15,15 @@
 #![cfg(any(not(target_arch = "wasm32"), feature = "wasm32_c"))]
 use ring::{constant_time, error, rand};
 
+<<<<<<< HEAD
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
+=======
+#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
+use wasm_bindgen_test::{wasm_bindgen_test as test, wasm_bindgen_test_configure};
+>>>>>>> 0a1fec88e (set wasi-sdk compiler + archiver)
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
 wasm_bindgen_test_configure!(run_in_browser);
 
 // This logic is loosly based on BoringSSL's `TEST(ConstantTimeTest, MemCmp)`.

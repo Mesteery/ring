@@ -18,6 +18,15 @@ use ring::{
     test, test_file,
 };
 
+<<<<<<< HEAD
+=======
+#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
+use wasm_bindgen_test::{wasm_bindgen_test as test, wasm_bindgen_test_configure};
+
+#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
+wasm_bindgen_test_configure!(run_in_browser);
+
+>>>>>>> 0a1fec88e (set wasi-sdk compiler + archiver)
 /// Test vectors from BoringSSL.
 #[test]
 fn test_signature_ed25519() {
