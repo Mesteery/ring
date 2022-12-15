@@ -106,6 +106,12 @@ case $target in
     export AR_wasm32_unknown_unknown=llvm-ar-$llvm_version
     export CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER=wasm-bindgen-test-runner
     ;;
+  wasm32-wasi)
+    # The first two are only needed for when the "wasm_c" feature is enabled.
+    export CC_wasm32_wasi=$WASI_SDK_PATH/bin/clang
+    export AR_wasm32_wasi=$WASI_SDK_PATH/bin/llvm-ar
+    export CARGO_TARGET_WASM32_WASI_RUNNER=wasmtime
+    ;;
   *)
     ;;
 esac
