@@ -90,8 +90,13 @@ mod digest_shavs {
                 use super::{run_known_answer_test, run_monte_carlo_test};
                 use ring::{digest, test_file};
 
+<<<<<<< HEAD
                 #[cfg(target_arch = "wasm32")]
                 use wasm_bindgen_test::wasm_bindgen_test;
+=======
+                #[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
+                use wasm_bindgen_test::wasm_bindgen_test as test;
+>>>>>>> a91f2a624 (fix test)
 
                 #[test]
                 #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test)]
