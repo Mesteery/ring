@@ -347,6 +347,74 @@ jobs:
       - run: |
           ${{ matrix.webdriver }} mk/cargo.sh test -vv --target=${{ matrix.target }} ${{ matrix.features }} ${{ matrix.mode }}
 
+<<<<<<< HEAD
+=======
+      # Check that all the needed symbol renaming was done.
+      # TODO: Do this check on Windows too.
+      - run: mk/check-symbol-prefixes.sh --target=${{ matrix.target }}
+
+  # The wasm32-wasi targets have a different set of feature sets.
+  test-wasm32-wasi:
+    # Don't run duplicate `push` jobs for the repo owner's PRs.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    runs-on: ${{ matrix.host_os }}
+
+    strategy:
+      matrix:
+        host_os:
+          - ubuntu-22.04
+        mode:
+          - # debug
+          - --release
+        rust_channel:
+          - stable
+          - beta
+          - nightly
+        target:
+          - wasm32-wasi
+
+    steps:
+      - if: ${{ contains(matrix.host_os, 'ubuntu') }}
+        run: sudo apt-get update -y
+
+      - uses: briansmith/actions-checkout@v2
+        with:
+          persist-credentials: false
+
+      - run: cargo generate-lockfile
+
+      - run: mk/install-build-tools.sh --target=${{ matrix.target }} ${{ matrix.features }}
+
+      - uses: briansmith/actions-rs-toolchain@v1
+        with:
+          override: true
+          target: ${{ matrix.target }}
+          toolchain: ${{ matrix.rust_channel }}
+
+      - name: Install wasi-sdk
+        run: |
+          export WASI_URL=$(curl -s https://api.github.com/repos/WebAssembly/wasi-sdk/releases/latest | jq -r '.assets[] | select(.name | contains("linux.tar.gz")) | .browser_download_url')
+          wget -O ./wasi-sdk-linux.tar.gz $WASI_URL
+          mkdir wasi-sdk
+          tar -C ./wasi-sdk -xf wasi-sdk-linux.tar.gz --strip-components=1
+          echo "WASI_SDK_PATH=`pwd`/wasi-sdk" >> $GITHUB_ENV
+      
+      - name: Install precompiled wasmtime
+        run: |
+          VERSION=v3.0.0
+          URL=https://github.com/bytecodealliance/wasmtime/releases/download/${VERSION}/wasmtime-${VERSION}-x86_64-linux.tar.xz
+          wget -O - $URL | tar -xJ --strip-components=1 -C ~/.cargo/bin
+          wasmtime --version
+
+      - run: |
+          mk/cargo.sh test -vv --target=${{ matrix.target }} ${{ matrix.mode }}
+
+      # Check that all the needed symbol renaming was done.
+      # TODO: Do this check on Windows too.
+      - run: mk/check-symbol-prefixes.sh --target=${{ matrix.target }}
+
+>>>>>>> e491f5275 (set wasi_sdk_path)
   coverage:
     # Don't run duplicate `push` jobs for the repo owner's PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
