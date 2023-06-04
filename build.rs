@@ -430,6 +430,19 @@ fn build_c_code(target: &Target, pregenerated: PathBuf, out_dir: &Path) {
     );
 }
 
+fn cc_builder() -> cc::Build {
+    let mut c = cc::Build::new();
+    let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
+    if target_os == "wasi" {
+        let wasi_sdk_path =
+            &std::env::var("WASI_SDK_PATH").expect("missing environment variable: WASI_SDK_PATH");
+        c.compiler(format!("{}/bin/clang", wasi_sdk_path).as_str());
+        c.archiver(format!("{}/bin/llvm-ar", wasi_sdk_path).as_str());
+        c.flag(format!("--sysroot={}/share/wasi-sysroot", wasi_sdk_path).as_str());
+    }
+    c
+}
+
 fn build_library(
     target: &Target,
     out_dir: &Path,
@@ -622,8 +635,8 @@ fn cc(
 
 fn nasm(file: &Path, arch: &str, out_file: &Path) -> Command {
     let oformat = match arch {
-        "x86_64" => ("win64"),
-        "x86" => ("win32"),
+        "x86_64" => "win64",
+        "x86" => "win32",
         _ => panic!("unsupported arch: {}", arch),
     };
     let mut c = Command::new("./target/tools/nasm");
