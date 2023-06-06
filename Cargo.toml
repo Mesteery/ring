@@ -314,16 +314,13 @@ once_cell = { version = "1.5.2", default-features = false, features=["std"], opt
 [target.'cfg(any(target_os = "dragonfly", target_os = "freebsd", target_os = "illumos", target_os = "netbsd", target_os = "openbsd", target_os = "solaris"))'.dependencies]
 once_cell = { version = "1.5.2", default-features = false, features=["std"] }
 
-[target.'cfg(all(target_arch = "wasm32", target_vendor = "unknown", target_os = "unknown", target_env = ""))'.dependencies]
-web-sys = { version = "0.3.37", default-features = false, features = ["Crypto", "Window"] }
-
 [target.'cfg(target_os = "windows")'.dependencies]
 winapi = { version = "0.3.8", default-features = false, features = ["ntsecapi", "wtypesbase"] }
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dev-dependencies]
 wasm-bindgen-test = { version = "0.3.26", default-features = false }
 
-[target.'cfg(any(unix, windows))'.dev-dependencies]
+[target.'cfg(any(unix, windows, target_os = "wasi"))'.dev-dependencies]
 libc = { version = "0.2.80", default-features = false }
 
 # Keep this in sync with `[dependencies]` in pregenerate_asm/Cargo.toml.
